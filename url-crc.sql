@@ -1,3 +1,4 @@
+PRAGMA schema.journal_mode=WAL;
 BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS "url_crc" (
         `url`   TEXT NOT NULL UNIQUE,

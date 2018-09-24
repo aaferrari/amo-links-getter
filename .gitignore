@@ -1,0 +1,6 @@
+url-crc.sqlite*
+results.json
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class

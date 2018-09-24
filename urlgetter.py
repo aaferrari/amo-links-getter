@@ -18,7 +18,7 @@ def aggregator(item):
     try: cleaned_hash = crc32(cleaned)
     # Managing unicode urls
     except UnicodeEncodeError: cleaned_hash = crc32(quote(cleaned.encode("utf8")))
-    if cleaned_hash not in results["pending"]:
+    if cleaned_hash not in results["pending"] and avoid_crawling.match(cleaned) == None:
         results["pending"].append(cleaned_hash)
         #if cur_db.execute("select crc32 from url_crc where crc32= %i" % cleaned_hash).fetchone() == None:
         cur_db.execute("insert or ignore into url_crc values('%s', %i, '%s')" % (cleaned, cleaned_hash, url))
