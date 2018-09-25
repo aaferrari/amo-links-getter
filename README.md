@@ -5,6 +5,7 @@ It currently get the following urls from the Android, Firefox, Thunderbird and S
 * Reviews (only the pages, not the individual review).
 * Images (preview), CSS and JS.
 * The .xpi files of all the versions.
+* User page
 
 Usage
 -----
