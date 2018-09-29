@@ -10,10 +10,12 @@ from urlparse import urlparse
 link_detector = re.compile(".*/((android|firefox|thunderbird|seamonkey)/(addon|user|collections|downloads|extensions)|user-media|static/(js|css|img))|versions|reviews/.*")
 # To avoid saving redundant or unnecessary links
 avoid_crawling = re.compile(".*/(reviews/([0-9]+|add|user:[^/]+)|type:attachment|format:rss)(/|$).*")
+# Removes unnecessary characters/parameters at the end of a url
+cleaner = re.compile("(/?\?src=.+|/|/?\)|/?#.+)$")
 
 # Add item to pending list with some fixes
 def aggregator(item):
-    cleaned = re.sub("/?\?src=.+|/$", "", item)
+    cleaned = cleaner.sub("", item).replace("http://", "https://")
     if cleaned.startswith("/") == True: cleaned = domain + cleaned
     try: cleaned_hash = crc32(cleaned)
     # Managing unicode urls
