@@ -9,25 +9,40 @@ from urlparse import urlparse
 
 link_detector = re.compile(".*/((android|firefox|thunderbird|seamonkey)/(addon|user|collections|downloads|extensions)|user-media|static/(js|css|img))|versions|reviews/.*")
 # To avoid saving redundant or unnecessary links
-avoid_crawling = re.compile(".*/(reviews/([0-9]+|add|user:[^/]+)|type:attachment|format:rss)(/|$).*")
-# Removes unnecessary characters/parameters at the end of a url
+avoid_crawling = re.compile(".*/(reviews/([0-9]+|add|user:[^/]+)|format:rss)(/|$).*")
+# Removes unnecessary characters/parameters of a url
 cleaner = re.compile("(/?\?src=.+|/|/?\)|/?#.+)$")
+# From https://github.com/mozilla/addons-server/blob/master/src/olympia/constants/search.py
+lang_codes = re.compile("/(he|da|bg|sl|uk|hu|pt(-(pt|br))?|cs|en(-(us|ca|gb))?|id|fr|ca|fa|nl|sk|es|ru|pl|ar|eu|ja|ko|sq|fi|el|ro|mn|de|sv(-se)?|af|zh(-(cn|tw))?|vi|it)/", re.I)
+
+def get_hash(text):
+    try: crc_hash = crc32(text)
+    # Managing unicode urls
+    except UnicodeEncodeError: crc_hash = crc32(quote(text.encode("utf8")))
+    return crc_hash
 
 # Add item to pending list with some fixes
 def aggregator(item):
     cleaned = cleaner.sub("", item).replace("http://", "https://")
+    cleaned = lang_codes.sub("/en-US/", cleaned)
     if cleaned.startswith("/") == True: cleaned = domain + cleaned
-    try: cleaned_hash = crc32(cleaned)
-    # Managing unicode urls
-    except UnicodeEncodeError: cleaned_hash = crc32(quote(cleaned.encode("utf8")))
+    # Skip links with type:attachment only if the same link without this segment
+    # has been discovered before
+    if get_hash(cleaned.replace("/type:attachment", "")) in results["pending"]: return
+    cleaned_hash = get_hash(cleaned)
     if cleaned_hash not in results["pending"] and avoid_crawling.match(cleaned) == None:
         results["pending"].append(cleaned_hash)
         #if cur_db.execute("select crc32 from url_crc where crc32= %i" % cleaned_hash).fetchone() == None:
         cur_db.execute("insert or ignore into url_crc values('%s', %i, '%s')" % (cleaned, cleaned_hash, url))
         #url_db.commit()
 
+url_sources = {"a": "href", "link": "href", "img": "src", "script": "src"}
+
 def get_links(soup):
-    for a in soup.findAll("a", {"href": link_detector}): aggregator(a["href"])
+    tags = soup.select("a, img, link, script")
+    for tag in tags: 
+        url_tag = tag[url_sources[tag.__dict__["name"]]]
+        if link_detector.match(url_tag) != None: aggregator(url_tag)
 
 url_db = sqlite3.connect("url-crc.sqlite")
 cur_db = url_db.cursor()

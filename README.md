@@ -11,13 +11,14 @@ The following table shows the links that are avoided or modified because they ar
 
 | Type              | Example                                                                                | Operation                                                  |
 |-------------------|----------------------------------------------------------------------------------------|------------------------------------------------------------|
-| [src param](https://addons-server.readthedocs.io/en/latest/topics/api/download_sources.html)         | addons.mozilla.org/en-US/firefox/addon/someaddon/?src=cb-dl-name               | Remove parameter                                           |
-| Individual review | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/34368935              | Skip (reviews are grouped in */reviews/?page=**) |
-| User reviews      | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/user:3626             | Skip (the same as above)                         |
-| Add review        | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/add                   | Skip (unnecessary)                                      |
-| type:attachment   | addons.mozilla.org/firefox/downloads/file/609267/type:attachment/someaddon.xpi | Skip (redundant)                                       |
-| RSS               | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/format:rss            | Skip (unnecessary)                                      |
-| # link            | addons.mozilla.org/en-US/firefox/addon/someaddon#something                     | Remove #*                                                 |
+| [src param](https://addons-server.readthedocs.io/en/latest/topics/api/download_sources.html)         | addons.mozilla.org/en-US/firefox/addon/someaddon/**?src=cb-dl-name**               | Remove parameter                                           |
+| Individual review | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/**34368935**              | Skip (reviews are grouped in */reviews/?page=*) |
+| User reviews      | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/**user:3626**             | Skip (the same as above)                         |
+| Add review        | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/**add**                   | Skip (unnecessary)                                      |
+| type:attachment   | addons.mozilla.org/firefox/downloads/file/609267/**type:attachment**/someaddon.xpi | It is only saved if the same link without this segment has not been discovered before, otherwise it is omitted.                                       |
+| RSS               | addons.mozilla.org/en-US/firefox/addon/someaddon/reviews/**format:rss**            | Skip (unnecessary)                                      |
+| # link            | addons.mozilla.org/en-US/firefox/addon/someaddon**#something**                     | Remove #*                                                 |
+| [Lang codes](https://en.wikipedia.org/wiki/ISO_639) | addons.mozilla.org/**de**/firefox/addon/someaddon | The language code is changed for en-US
 
 Requirements
 ------------
